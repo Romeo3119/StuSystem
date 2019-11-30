@@ -3,27 +3,13 @@
 #include <Windows.h>
 #include <stdio.h>
 #include <fstream>
+#include <algorithm>
 
 #define COL 8
 using namespace std;
 
 void Stu::menu()
 {
-	/*cout << "系统正在初始化,请稍后";
-	cout << ".";
-	Sleep(400);
-	cout << ".";
-	Sleep(400);
-	cout << ".";
-	Sleep(400);
-	cout << ".";
-	Sleep(400);
-	cout << ".";
-	Sleep(400);
-	cout << ".\n";
-	Sleep(400);
-	system("cls");
-	*/
 	cout << "      学生信息管理系统" << endl;
 	cout << "1.录入学生信息  2.添加学生信息" << endl;
 	cout << "3.查找学生信息  4.删除学生信息" << endl;
@@ -288,6 +274,13 @@ void Stu::printStuInfo()
 
 void Stu::saveStuInfo()
 {
+	vector<int> totalVec;
+	for (int i = 0; i < stuInfoVec.size(); ++i)
+	{
+		totalVec.push_back(stuInfoVec[i].mathScore + stuInfoVec[i].engScore + stuInfoVec[i].cScore);
+	}
+	sort(totalVec.begin(), totalVec.end());
+	reverse(totalVec.begin(), totalVec.end());
 
 	cout << "正在保存为文件,请稍后…\n";
 
@@ -296,15 +289,22 @@ void Stu::saveStuInfo()
 	//写的方式打开文件
 	stuFile.open("..\\学生信息表\\stuInfo.csv", ios::out);
 	//rapidcsv::Document doc("..\\学生信息表\\stuInfo.csv", rapidcsv::LabelParams(-1, -1));
-	stuFile << "学号," << "姓名," << "电话号码," << "年龄," << "数学," << "英语," << "C语言\n";
+	stuFile <<","<< "  学号," << "  姓名," << " 电话号码," << "  年龄," << "  数学," << "  英语," << "  C语言,"<<"  总分,"<<"  名次\n";
 	if (stuFile.is_open() == true)
 	{
 		for (int i = 0; i < stuInfoVec.size(); ++i)
 		{
-			stuFile << stuInfoVec[i].stuNum << "," << stuInfoVec[i].stuName << ","
+			stuFile << i + 1 << "," << stuInfoVec[i].stuNum << "," << stuInfoVec[i].stuName << ","
 				<< stuInfoVec[i].stuTel << "," << stuInfoVec[i].stuAge << ","
 				<< stuInfoVec[i].mathScore << "," << stuInfoVec[i].engScore << ","
-				<< stuInfoVec[i].cScore << "\n";
+				<< stuInfoVec[i].cScore << "," << stuInfoVec[i].mathScore + stuInfoVec[i].engScore
+				+ stuInfoVec[i].cScore << ",";
+			for (int j = 0; j < totalVec.size(); ++j)
+			{
+				if (stuInfoVec[i].mathScore + stuInfoVec[i].engScore
+					+ stuInfoVec[i].cScore == totalVec[j])
+					stuFile << j + 1 << "\n";
+			}
 		}
 	}
 
